@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "487556938038",
+    "project_id": "park-hotel-d898c",
+    "storage_bucket": "park-hotel-d898c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487556938038:android:37983fe5da15ccc8625b97",
+        "android_client_info": {
+          "package_name": "systan.app.park_hotel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNpNEQc-N9EIe2RufGQOdeFnD9_auaX_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
