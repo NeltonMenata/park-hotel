@@ -1,0 +1,331 @@
+import 'dart:io';
+import 'package:park_hotel/layers/core/inject/inject.dart';
+import 'package:park_hotel/layers/presenter/ui/add_event/add_event_controller.dart';
+import 'package:park_hotel/layers/presenter/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class AddEventPage extends StatefulWidget {
+  const AddEventPage({Key? key}) : super(key: key);
+
+  @override
+  State<AddEventPage> createState() => _AddEventPageState();
+}
+
+class _AddEventPageState extends State<AddEventPage> {
+  final controller = getIt<AddEventController>();
+  final dateController = TextEditingController();
+  final nameController = TextEditingController();
+  final organizationNameController = TextEditingController();
+  final priceController = TextEditingController();
+  final priceVipController = TextEditingController(text: "0");
+  final bonusCredit = TextEditingController(text: "0");
+
+  DateTime date = DateTime.now();
+  Image image = Image.asset(Utils.assetLogo);
+  File? imageFile;
+
+  bool isSave = false;
+
+  @override
+  Widget build(BuildContext context) {
+    //final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    const paddingLeft = 15.0;
+    const paddingTop = 16.0;
+    const paddingBottom = 15.0;
+    const crossStart = CrossAxisAlignment.start;
+    const fontSize = 17.0;
+    final fontSizeTitle = width * .05 * 1.35;
+    const allPadding = 8.0;
+    final circleAvatarSize = width * .2;
+
+    return Scaffold(
+      /*
+      appBar: AppBar(
+        title: const Text("Evento", style: TextStyle(color: Colors.black)),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black54,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.white,
+      ),
+      */
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: paddingLeft, top: paddingTop, bottom: paddingBottom),
+            child: Column(children: [
+              Text(
+                "Adicione um Evento novo, com nome e data de realização!",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Arial Black",
+                  fontSize: fontSizeTitle,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Column(crossAxisAlignment: crossStart, children: [
+                        const Text(
+                          "Nome do Evento",
+                          style: TextStyle(
+                              fontSize: fontSize, fontWeight: FontWeight.w900),
+                        ),
+                        TextFormField(
+                          controller: nameController,
+                          keyboardType: TextInputType.name,
+                          decoration: const InputDecoration(
+                              suffixIcon:
+                                  Icon(Icons.insert_drive_file_outlined),
+                              border: OutlineInputBorder()),
+                        )
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Column(
+                        crossAxisAlignment: crossStart,
+                        children: [
+                          const Text(
+                            "Data de Realização",
+                            style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.w900),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              // print(DateTime.now() + 1);
+                              date = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime(
+                                        date.year + 1, date.month, date.day),
+                                  ) ??
+                                  DateTime.now();
+                              dateController.text =
+                                  "${date.day}/${date.month}/${date.year}";
+
+                              setState(() {});
+                            },
+                            child: TextFormField(
+                              controller: dateController,
+                              enabled: false,
+                              decoration: const InputDecoration(
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey)),
+                                suffixIcon: Icon(Icons.event_outlined),
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Column(crossAxisAlignment: crossStart, children: [
+                        const Text(
+                          "Organização",
+                          style: TextStyle(
+                              fontSize: fontSize, fontWeight: FontWeight.w900),
+                        ),
+                        TextFormField(
+                          controller: organizationNameController,
+                          keyboardType: TextInputType.name,
+                          decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.group_outlined),
+                              border: OutlineInputBorder()),
+                        )
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Column(crossAxisAlignment: crossStart, children: [
+                        const Text(
+                          "Valor de ingresso",
+                          style: TextStyle(
+                              fontSize: fontSize, fontWeight: FontWeight.w900),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: priceController,
+                          decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.attach_money_outlined),
+                              border: OutlineInputBorder()),
+                        )
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Column(crossAxisAlignment: crossStart, children: [
+                        const Text(
+                          "Ingresso VIP",
+                          style: TextStyle(
+                              fontSize: fontSize, fontWeight: FontWeight.w900),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: priceVipController,
+                          decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.attach_money_outlined),
+                              border: OutlineInputBorder()),
+                        )
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Column(crossAxisAlignment: crossStart, children: [
+                        const Text(
+                          "Bonus de Crédito de Entrada",
+                          style: TextStyle(
+                              fontSize: fontSize, fontWeight: FontWeight.w900),
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: bonusCredit,
+                          decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.attach_money_outlined),
+                              border: OutlineInputBorder()),
+                        )
+                      ]),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(allPadding),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.black38,
+                        ),
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.all(allPadding),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: circleAvatarSize,
+                                  width: circleAvatarSize,
+                                  child: ClipRRect(
+                                    child: image,
+                                    borderRadius: BorderRadius.circular(10),
+                                    //  radius: circleAvatarSize,
+                                  ),
+                                ),
+                                 const Column(children: [
+                                  Text(
+                                    "Selecione o",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                  Text(
+                                    "Cartaz do Evento",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w900),
+                                  ),
+                                ]),
+                                IconButton(
+                                  onPressed: () {
+                                    _selectImgCartaz();
+                                  },
+                                  icon: Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    size: width * .1,
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.all(allPadding),
+                        child: isSave
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ElevatedButton(
+                                onPressed: () async {
+                                  if (nameController.text.isEmpty ||
+                                      dateController.text.isEmpty ||
+                                      organizationNameController.text.isEmpty ||
+                                      priceController.text.isEmpty) {
+                                    showResultCustom(context,
+                                        "Preencha os campos corretamente!");
+                                    return;
+                                  }
+
+                                  setState(() {
+                                    isSave = !isSave;
+                                  });
+                                  await controller.saveEvent(context,
+                                      name: nameController.text,
+                                      dateOfRealization: date,
+                                      organization:
+                                          organizationNameController.text,
+                                      priceVip:
+                                          int.tryParse(priceVipController.text),
+                                      price: int.parse(priceController.text),
+                                      imgCartaz: imageFile,
+                                      bonusCredit:
+                                          int.tryParse(bonusCredit.text) ?? 0);
+
+                                  setState(() {
+                                    nameController.text = "";
+                                    dateController.text = "";
+                                    organizationNameController.text = "";
+                                    priceController.text = "";
+                                    priceVipController.text = "0";
+                                    bonusCredit.text = "0";
+                                    isSave = !isSave;
+                                    image = Image.asset(Utils.assetLogo);
+                                  });
+                                },
+                                child: const Text(
+                                  "Salvar Evento",
+                                  style: TextStyle(fontSize: fontSize),
+                                ),
+                              )),
+                    const SizedBox(
+                      height: 50,
+                    )
+                  ],
+                ),
+              )
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _selectImgCartaz() async {
+    // ignore: invalid_use_of_visible_for_testing_member
+    final imgCartaz = await ImagePicker.platform.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 600,
+        maxWidth: 600,
+        imageQuality: 70);
+
+    setState(() {
+      if (imgCartaz != null) {
+        imageFile = File(imgCartaz.path);
+        image = Image.file(
+          imageFile!,
+          fit: BoxFit.cover,
+        );
+      }
+    });
+  }
+}
